@@ -302,7 +302,7 @@ class MainWidget(QWidget):
         """
         QCheckBox 状态改变时要执行的槽函数
         :param checked: > 0 为选中; 其余为未选中
-        :param index: 编号
+        :param index: 选中的 QCheckBox 的编号
         :return: 无
         """
         self.checkbox_infos[index]['checkState'] = int(checked) > 0
