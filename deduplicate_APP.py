@@ -31,11 +31,104 @@ class MainWidget(QWidget):
         """
         super().__init__()
 
+        self.file_infos = {}  # 保存文件信息
+        self.checkbox_infos = {}  # 保存 QCheckBox 的信息
+        self.progressBar_value = 0  # 进度条的值
+
+        self.max_cols = 0  # 最大列数
+
+        # 线程池
+        self.thread_pool = QThreadPool()
+        self.thread_pool.setMaxThreadCount(4)
+
+        self.initUI()
+
     def initUI(self):
         """
         初始化UI
         :return: 无
         """
+        self.setAcceptDrops(True)
+
+        layout = QVBoxLayout()
+        checkbox_layout = QHBoxLayout()
+
+        self.label = QLabel("将 Excel 文件或文件夹拖放到框内:", self)
+        self.treeWidget = QTreeWidget()
+        self.btn_clear = QPushButton('清空列表')
+
+        self.label_tips = QLabel('请选择要检测重复的列号:')
+
+        self.widget = QWidget()
+
+        for i in range(1, 14):
+            # 新建 QCheckBox
+            checkBox = QCheckBox()
+            checkBox.setText(f'第{i}列')
+
+            # checkBox 状态改变信号处理
+            checkBox.stateChanged.connect(partial(self.on_checkBox_state_changed, index=i))
+
+            # 将 checkBox 添加到水平布局
+            checkbox_layout.addWidget(checkBox)
+
+            # 将编号与 QCheckBox 对应起来
+            self.checkbox_infos[i] = {
+                'obj': checkBox,
+                'checkState': False
+            }
+
+        self.widget.setLayout(checkbox_layout)
+
+        self.btn_cancel = QPushButton('停止执行')
+        self.btn = QPushButton('开始去重')
+
+        self.label_result = QLabel('...')
+        self.progressBar = QProgressBar()
+
+        self.contex_menu = QMenu(self)  # 创建菜单
+
+        layout.addWidget(self.label)
+        layout.addWidget(self.treeWidget)
+        layout.addWidget(self.btn_clear)
+
+        layout.addWidget(self.label_tips)
+        layout.addWidget(self.widget)
+
+        layout.addWidget(self.btn_cancel)
+        layout.addWidget(self.btn)
+        layout.addWidget(self.label_result)
+
+        layout.addWidget(self.progressBar)
+
+        self.setLayout(layout)
+
+        # 为 TreeWidget 添加列表头
+        self.treeWidget.setHeaderLabels(['文件名', '是否有重复项', '总行数', '总列数', '重复数据行数'])
+        self.treeWidget.header().setDefaultAlignment(Qt.AlignCenter)  # 居中显示
+
+        # 设置 TreeWidget 可拖拽
+        self.treeWidget.setAcceptDrops(True)
+        self.treeWidget.setDragEnabled(True)
+
+        # 为右键菜单添加移除选项
+        self.remove_action = QAction("移除选项", self, triggered=self.removeItem)
+        self.contex_menu.addAction(self.remove_action)
+
+        # 为 QTreeWidget 绑定右键菜单
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.showContexMenu)
+
+        self.btn_clear.clicked.connect(self.clearList)  # 清除列表的按键点击信号绑定
+        self.btn_cancel.clicked.connect(self.cancelProcess_excel)
+        self.btn.clicked.connect(self.process_excel)  # 开始去重按钮点击信号绑定
+
+        self.setWindowTitle('Excel 去重软件')  # 窗体标题
+        self.setWindowOpacity(0.95)
+
+        self.setGeometry(800, 500, 890, 550)  # x, y, w, h
+
+        self.centerOnScreen()  # 居中显示窗体
 
     def centerOnScreen(self):
         """
