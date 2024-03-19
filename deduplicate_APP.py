@@ -321,9 +321,12 @@ class MainWidget(QWidget):
 
     def clearList(self):
         """
-        清空 文件列表
+        清空文件列表
         :return: 无
         """
+        self.treeWidget.clear()
+        self.file_infos.clear()
+        self.setLable(self.label_result, '...')
 
     def cancelProcess_excel(self):
         """
