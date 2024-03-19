@@ -263,15 +263,15 @@ class MainWidget(QWidget):
 
         return ws.max_row, ws.max_column
 
-    def updateProgressBar(self):
-        """
-        更新进度条
-        :return: 无
-        """
-
     def removeItem(self):
         """
         移除 QTreeWidget 中的项目
+        :return: 无
+        """
+
+    def updateProgressBar(self):
+        """
+        更新进度条
         :return: 无
         """
 
