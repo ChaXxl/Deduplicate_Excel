@@ -244,6 +244,13 @@ class MainWidget(QWidget):
         :param point: 坐标
         :return: 无
         """
+        # 要显示菜单的坐标
+        showPoint = self.mapToGlobal(point)
+        showPoint.setX(showPoint.x() + 35)
+        showPoint.setY(showPoint.y() + 55)
+
+        # 在指定位置处显示
+        self.contex_menu.exec(showPoint)
 
     def getExcelFileRowsCols(self, filepath) -> Tuple:
         """
