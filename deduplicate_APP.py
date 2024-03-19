@@ -163,16 +163,16 @@ class MainWidget(QWidget):
                 # 文件后缀是 .xlsx 并且尚未拖入的
                 for f in fp.glob('**/*.xlsx'):
                     if not self.file_infos.get(filepath):
-                        self.addFilePath_to_TreeView(str(f))
+                        self.addFilePath_to_TreeView(str(f))    # 将文件路径显示到 TreeView 中
 
                 # 文件后缀是 .xls 并且尚未拖入的
                 for f in fp.glob('**/*.xls'):
                     if not self.file_infos.get(filepath):
-                        self.addFilePath_to_TreeView(str(f))
+                        self.addFilePath_to_TreeView(str(f))     # 将文件路径显示到 TreeView 中
 
             # 用户拖入的是文件
             elif not self.file_infos.get(filepath) and (filepath.endswith('.xlsx') or filepath.endswith('.xls')):
-                self.addFilePath_to_TreeView(filepath)
+                self.addFilePath_to_TreeView(filepath)           # 将文件路径显示到 TreeView 中
 
     def addFilePath_to_TreeView(self, filepath: str):
         """
