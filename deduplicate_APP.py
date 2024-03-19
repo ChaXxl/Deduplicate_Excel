@@ -135,6 +135,10 @@ class MainWidget(QWidget):
         将窗体移动到屏幕中央
         :return: 无
         """
+        rect = self.frameGeometry()
+        centerPoint = QScreen.availableGeometry(QApplication.primaryScreen()).center()
+        rect.moveCenter(centerPoint)
+        self.move(rect.topLeft())
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         """
