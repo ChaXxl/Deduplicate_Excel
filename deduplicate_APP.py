@@ -310,8 +310,14 @@ class MainWidget(QWidget):
     def getAllCheckBoxState(self) -> Dict:
         """
         获取所有 checkBox 的状态, 判断用户是否勾选了 checkBox
-        :return:  返回一个字典. {1: checked, 1: checked, ...}
+        :return:  返回一个字典. {1: False, 1: True, ...}
         """
+        res_dict = {
+            key: self.checkbox_infos[int(key)]['checkState']
+            for key in self.checkbox_infos
+            if int(key) <= self.max_cols
+        }
+        return res_dict
 
     def clearList(self):
         """
