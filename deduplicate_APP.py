@@ -251,6 +251,10 @@ class MainWidget(QWidget):
         :param filepath: 文件路径
         :return: 无
         """
+        wb = load_workbook(filepath)
+        ws = wb.active
+
+        return ws.max_row, ws.max_column
 
     def updateProgressBar(self):
         """
