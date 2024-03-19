@@ -293,6 +293,10 @@ class MainWidget(QWidget):
         :param color: label 文字上的颜色
         :return: 无
         """
+        if label is None:
+            return
+        label.setText(text)
+        label.setStyleSheet(f'color: {color}')
 
     def on_checkBox_state_changed(self, checked, index):
         """
