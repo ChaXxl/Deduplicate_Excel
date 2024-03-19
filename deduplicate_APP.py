@@ -155,11 +155,37 @@ class MainWidget(QWidget):
         :param event: 事件
         :return: 无
         """
+        for url in event.mimeData().urls():
+            filepath = url.toLocalFile()  # 获取文件路径
+            fp = Path(filepath)
+            # 用户拖入的是文件夹
+            if fp.is_dir():
+                # 文件后缀是 .xlsx 并且尚未拖入的
+                for f in fp.glob('**/*.xlsx'):
+                    if not self.file_infos.get(filepath):
+                        self.addFilePath_to_TreeView(str(f))
+
+                # 文件后缀是 .xls 并且尚未拖入的
+                for f in fp.glob('**/*.xls'):
+                    if not self.file_infos.get(filepath):
+                        self.addFilePath_to_TreeView(str(f))
+
+            # 用户拖入的是文件
+            elif not self.file_infos.get(filepath) and (filepath.endswith('.xlsx') or filepath.endswith('.xls')):
+                self.addFilePath_to_TreeView(filepath)
 
     def addFilePath_to_TreeView(self, filepath: str):
         """
         添加文件路径到 TreeView 中
         :param filepath: 文件路径
+        :return: 无
+        """
+
+    def updateTreeView(self, filepath: str, only_rowcol: bool):
+        """
+        更新 QTreeWidget
+        :param filepath: 文件路径
+        :param max_rows: 文件总行数
         :return: 无
         """
 
@@ -174,14 +200,6 @@ class MainWidget(QWidget):
         """
         获取 Excel 文件的总行数
         :param filepath: 文件路径
-        :return: 无
-        """
-
-    def updateTreeView(self, filepath: str, only_rowcol: bool):
-        """
-        更新 QTreeWidget
-        :param filepath: 文件路径
-        :param max_rows: 文件总行数
         :return: 无
         """
 
