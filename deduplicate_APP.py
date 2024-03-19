@@ -31,11 +31,11 @@ class MainWidget(QWidget):
         """
         super().__init__()
 
-        self.file_infos = {}  # 保存文件信息
-        self.checkbox_infos = {}  # 保存 QCheckBox 的信息
+        self.file_infos = {}        # 保存文件信息
+        self.checkbox_infos = {}    # 保存 QCheckBox 的信息
         self.progressBar_value = 0  # 进度条的值
 
-        self.max_cols = 0  # 最大列数
+        self.max_cols = 0           # 最大列数
 
         # 线程池
         self.thread_pool = QThreadPool()
