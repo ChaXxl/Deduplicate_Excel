@@ -268,6 +268,16 @@ class MainWidget(QWidget):
         移除 QTreeWidget 中的项目
         :return: 无
         """
+        for selected_item in self.treeWidget.selectedItems():
+            index = self.treeWidget.indexOfTopLevelItem(selected_item)  # 获取选中节点的 index
+
+            self.treeWidget.takeTopLevelItem(index)     # 因为是根节点, 所以直接从根节点中移除
+            self.file_infos.pop(selected_item.text(0))  # 从 file_infos 中移除
+
+            # 前面删掉一个, 后面的 index 就得 -1
+            for i in self.file_infos:
+                if self.file_infos[i]['index'] > index:
+                    self.file_infos[i]['index'] -= 1
 
     def updateProgressBar(self):
         """
