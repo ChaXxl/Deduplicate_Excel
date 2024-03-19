@@ -391,6 +391,53 @@ class MainWidget(QWidget):
         :param cols: 要用哪几列来检查重复
         :return: 返回 bool 值. 如果有重复的就返回 True, 没有重复数据就返回 False
         """
+        workbook = load_workbook(filepath)
+        sheet = workbook.active
+
+        repeat_flag = False  # 是否有重复数据
+
+        seen_rows = set()
+        rows_to_delete = []
+
+        for row in sheet.iter_rows(min_row=2):
+            # 把该行需要检查重复的项放入 row_data   下标 (0、1、2)
+            row_data = tuple(row[i - 1].value for i in cols)
+
+            h = hash(row_data)  # 计算每一行数据的哈希值, 用它来判断是否重复
+            if h in seen_rows:
+                repeat_flag = True
+                rows_to_delete.append(row[0].row)  # 将要删除的行号放入数组
+            else:
+                seen_rows.add(h)  # 将哈希值放入集合
+
+        repeat_rows = len(rows_to_delete)  # 重复行数
+
+        # 写入文件的一些信息。 是否有重复数据、重复行数
+        self.file_infos[str(filepath)]['isRepeat'] = repeat_flag
+        self.file_infos[str(filepath)]['repeat_rows'] = str(repeat_rows)
+
+        # 更新树形图信息
+        self.updateTreeView(str(filepath), False)
+
+        # 没有重复项, 结束函数
+        if repeat_flag is False:
+            return False
+
+        # 删除重复行
+        while len(rows_to_delete):
+            sheet.delete_rows(rows_to_delete[0])
+            # 因为删掉了一行, 所以表格总体往上移, 那对应行号就-1
+            rows_to_delete = [rows_to_delete[i] - 1 for i in range(1, len(rows_to_delete))]
+
+        # 创建保存目录
+        output_directory = filepath.parent / "去重结果"
+        if not output_directory.exists():
+            output_directory.mkdir()
+
+        # 保存去重后的文件
+        workbook.save(output_directory / filepath.name)
+
+        return True
 
 
 if __name__ == '__main__':
