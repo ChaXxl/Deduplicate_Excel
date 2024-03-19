@@ -339,6 +339,50 @@ class MainWidget(QWidget):
         处理 Excel 文件
         :return: 无
         """
+        # 获取 ListWidget 里面的所有项
+        filepath_list = [self.treeWidget.topLevelItem(i).text(0) for i in range(self.treeWidget.topLevelItemCount())]
+
+        # ListWidget 内容为空, 弹窗提示用户并结束函数
+        if not filepath_list:
+            msgBox = QMessageBox()
+            msgBox.setText("请把 Excel 文件拖进来")
+            msgBox.setWindowTitle("警告")
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec()
+            return
+
+        res_dict = self.getAllCheckBoxState()       # 获取所有 checkBox 的状态
+        res_list = [res_dict[i] for i in res_dict]  # 获取所有 checkBox 的状态的布尔值
+
+        # 如果所有 checkBox 都没有勾选
+        if not all(res_list):
+            ...
+
+        self.btn_clear.setEnabled(False)    # 禁用清空列表按钮
+        self.btn.setEnabled(False)          # 禁用开始去重按钮
+
+        self.setLable(self.label_result, '处理中, 请您稍等...')
+
+        res_list = []
+        for filepath in filepath_list:
+            # 获取要用哪几列来检查重复
+            cols = [int(i) for i in res_dict if res_dict[i]]
+
+            # 调用去重函数, 并将返回结果存放在 res_list 列表中
+            res = self.deduplicate_excel(Path(filepath), cols)
+            res_list.append(res)
+
+            self.updateTreeView(str(filepath), False)  # 更新 TreeWidget 信息
+
+        if any(res_list):
+            self.setLable(self.label_result, '处理完成。 结果在 "去重结果" 文件夹中, 若没有这个文件夹说明没有重复项',
+                          '#00b440')
+        else:
+            self.setLable(self.label_result, '该列表的 Excel 文件都没有重复项~', '#ffb434')
+
+        self.btn_clear.setEnabled(True) # 启用清空列表按钮
+        self.btn.setEnabled(True)       # 启用开始去重按钮
 
     def deduplicate_excel(self, filepath: Path, cols: List[int]) -> bool:
         """
