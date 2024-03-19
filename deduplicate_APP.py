@@ -180,6 +180,34 @@ class MainWidget(QWidget):
         :param filepath: 文件路径
         :return: 无
         """
+        item = QTreeWidgetItem(self.treeWidget)     # 新建根节点
+        item.setText(0, filepath)                   # 设置根节点的文本
+
+        item.setTextAlignment(1, Qt.AlignCenter)    # 设置根节点第2列的文本居中
+        item.setTextAlignment(2, Qt.AlignCenter)    # 设置根节点第3列的文本居中
+        item.setTextAlignment(3, Qt.AlignCenter)    # 设置根节点第4列的文本居中
+        item.setTextAlignment(4, Qt.AlignCenter)    # 设置根节点第5列的文本居中
+
+        self.treeWidget.resizeColumnToContents(0)   # 根据列中的内容, 自动设置第1列的宽度
+        self.treeWidget.resizeColumnToContents(1)   # 根据列中的内容, 自动设置第2列的宽度
+        self.treeWidget.resizeColumnToContents(2)   # 根据列中的内容, 自动设置第3列的宽度
+        self.treeWidget.resizeColumnToContents(3)   # 根据列中的内容, 自动设置第4列的宽度
+        self.treeWidget.resizeColumnToContents(4)   # 根据列中的内容, 自动设置第5列的宽度
+
+        # 获取该节点的 index
+        index = self.treeWidget.indexOfTopLevelItem(item)
+
+        # 获取该文件的总行数、总列数
+        rowCol = self.getExcelFileRowsCols(filepath)
+        max_rows = str(rowCol[0])
+        self.max_cols = max_cols = rowCol[1]
+
+        # 该文本对应的 QTreeWidgetItem 的index、是否有重复数据、总行数、总列数、重复行数
+        self.file_infos[filepath] = {'index': index, 'isRepeat': False, 'max_rows': max_rows, 'max_cols': max_cols,
+                                     'repeat_rows': '0'}
+
+        # 在 TreeView 中显示文件的总行数、总列数
+        self.updateTreeView(filepath, True)
 
     def updateTreeView(self, filepath: str, only_rowcol: bool):
         """
