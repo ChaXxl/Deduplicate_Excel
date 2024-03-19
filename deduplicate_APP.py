@@ -305,6 +305,7 @@ class MainWidget(QWidget):
         :param index: 编号
         :return: 无
         """
+        self.checkbox_infos[index]['checkState'] = int(checked) > 0
 
     def getAllCheckBoxState(self) -> Dict:
         """
