@@ -216,6 +216,27 @@ class MainWidget(QWidget):
         :param max_rows: 文件总行数
         :return: 无
         """
+        index = self.file_infos[filepath]['index']      # 在字典中查找控件的 index
+        item = self.treeWidget.topLevelItem(int(index)) # 根据 index 获取 QTreeWidgetItem 对象
+
+        max_rows = self.file_infos.get(filepath).get('max_rows') # 获取文件的总行数
+        max_cols = self.file_infos.get(filepath).get('max_cols') # 获取文件的总列数
+
+        # 只更新文件总行数和总列数
+        if only_rowcol:
+            item.setText(2, str(max_rows))
+            item.setText(3, str(max_cols))
+            return
+
+        isRepeat = self.file_infos.get(filepath).get('isRepeat')
+        repeat_rows = self.file_infos.get(filepath).get('repeat_rows')
+
+        if isRepeat:
+            item.setText(1, '是')
+        else:
+            item.setText(1, '否')
+
+        item.setText(4, str(repeat_rows))
 
     def showContexMenu(self, point):
         """
